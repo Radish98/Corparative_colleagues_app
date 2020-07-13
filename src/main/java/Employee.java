@@ -2,13 +2,13 @@ public class Employee {
 
     private String name;
     private String department;
-    private int salary;
+    private float salary;
 
-    public int getSalary() {
+    public float getSalary() {
         return salary;
     }
 
-    public void setSalary(int salary) {
+    public void setSalary(float salary) {
         this.salary = salary;
     }
 
