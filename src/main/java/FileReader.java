@@ -3,14 +3,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FileReader {
-//    private static String listOfColleagues = "list.txt";
     private static String absolutePath = "src/main/resources/list.txt";
     private static File justFile = new File (absolutePath);
     private static List<String> listOfColleagues;
 //    private static List<String> justList;
+//    private static String listOfColleagues = "list.txt";
 
 
 
@@ -49,13 +51,24 @@ public class FileReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("All list:" + listOfColleagues);
-        
-        for(int i = 0; i < listOfColleagues.size(); i++){
-            String fio = listOfColleagues.get(i).split("/")[0];
-            String department = listOfColleagues.get(i).split("/")[1];
-            String salary = listOfColleagues.get(i).split("/")[2];
 
+        List<Employee> employees = new ArrayList<>();
+        Employee newEmployee = new Employee();
+        HashMap<String, Integer> averageSalary = new HashMap<>();
+
+        for(int i = 0; i < listOfColleagues.size(); i++){
+            String department = listOfColleagues.get(i).split("/")[1];
+            newEmployee.setDepartment(department);
+            newEmployee.setName(listOfColleagues.get(i).split("/")[0]);
+            newEmployee.setSalary(Integer.parseInt(listOfColleagues.get(i).split("/")[2]));
+
+            employees.add(i,newEmployee);
+            if(averageSalary.get(department)== null){
+                averageSalary.put(department, Integer.parseInt(listOfColleagues.get(i).split("/")[2]));
+            }else{
+                averageSalary.put(department, averageSalary.get(department)+Integer.
+                        parseInt(listOfColleagues.get(i).split("/")[2]));
+            }
         }
 
 
