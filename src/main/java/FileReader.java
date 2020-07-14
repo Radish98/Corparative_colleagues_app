@@ -1,10 +1,15 @@
+import Objects.Department;
+import Objects.Employee;
+
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class FileReader {
@@ -49,34 +54,49 @@ public class FileReader {
             System.out.println("++++++++++++++");
             listOfColleagues = Files.readAllLines(Paths.get(justFile.toURI()));
         } catch (IOException e) {
+            System.out.println("point of exeption");
             e.printStackTrace();
         }
 
         List<Employee> employees = new ArrayList<>();
 
-        HashMap<String, Float> averageSalary = new HashMap<>();
+        Map<String, Department> mapOfDepartments = new HashMap<>();
 
         for(int i = 0; i < listOfColleagues.size(); i++){
+            Department newDepartment = new Department();
             Employee newEmployee = new Employee();
             String department = listOfColleagues.get(i).split("/")[1];
             newEmployee.setDepartment(department);
             newEmployee.setName(listOfColleagues.get(i).split("/")[0]);
             newEmployee.setSalary(Float.parseFloat(listOfColleagues.get(i).split("/")[2]));
 
-            employees.add(i,newEmployee);
-            if(averageSalary.get(department)== null){
-                averageSalary.put(department, Float.parseFloat(listOfColleagues.get(i).split("/")[2]));
+            employees.add(newEmployee);
+            if(mapOfDepartments.get(department)== null){
+                newDepartment.setName(department);
+                newDepartment.setSumOfSalary(BigDecimal.valueOf(Float.parseFloat(listOfColleagues.get(i).split("/")[2])));
+                newDepartment.addNewEmployee(listOfColleagues.get(i).split("/")[0]);
+                mapOfDepartments.put(department, newDepartment);
             }else{
-                averageSalary.put(department, averageSalary.get(department)+ Float.
-                        parseFloat(listOfColleagues.get(i).split("/")[2]));
+                mapOfDepartments.get(department).addNewEmployee(listOfColleagues.get(i).split("/")[0]);
+                mapOfDepartments.get(department).setSumOfSalary(BigDecimal.valueOf(Float.
+                        parseFloat(
+                                listOfColleagues
+                                        .get(i)
+                                        .split("/")[2])).add(mapOfDepartments.get(department).getSumOfSalary()));
             }
         }
 
-        Set<String> keySet = averageSalary.keySet();
+        Set<String> keySet = mapOfDepartments.keySet();
         for(int i = 0; i < employees.size(); i++){
-            if(averageSalary.get(employees.get(i).getDepartment()) > employees.get(i).getSalary()){
+
+            if(mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary()
+                    .compareTo(
+                            BigDecimal.valueOf(
+                                    employees.get(i).getSalary())) >= 0){
                 for(String key : keySet){
-                    if(averageSalary.get(key) < employees.get(i).getSalary())
+                    if(mapOfDepartments.get(key).getAverageSalary()
+                            .compareTo(
+                                    BigDecimal.valueOf(employees.get(i).getSalary()))<=0)
                         System.out.println("Сотрудника " + employees.get(i).getName() + " можно перевести в " + key);
                 }
             }
