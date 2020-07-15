@@ -46,9 +46,6 @@ public class Department {
         this.sumOfSalary = sumOfSalary;
     }
 
-    public List<String> getListOfEmployees() {
-        return listOfEmployees;
-    }
     public void addNewEmployee(String fio){
         listOfEmployees.add(fio);
     }
@@ -57,7 +54,4 @@ public class Department {
         return listOfEmployees.size();
     }
 
-    public void setCountOfEmployees(int countOfEmployees) {
-        this.countOfEmployees = countOfEmployees;
-    }
 }
