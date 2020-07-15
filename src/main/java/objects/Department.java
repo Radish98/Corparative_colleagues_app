@@ -1,4 +1,4 @@
-package Objects;
+package objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,6 +11,7 @@ public class Department {
     private BigDecimal averageSalary;
     private BigDecimal sumOfSalary;
     private List<String> listOfEmployees = new ArrayList<>();
+    private List<Employee> listOfObjectEmployees = new ArrayList<>();
     private int countOfEmployees;
 
 
@@ -26,6 +27,14 @@ public class Department {
     public BigDecimal getAverageSalary() {
         averageSalary = sumOfSalary.divide(BigDecimal.valueOf(getCountOfEmployees()),8, RoundingMode.CEILING);
         return averageSalary;
+    }
+
+    public void addEmployeeObject(Employee employee){
+        listOfObjectEmployees.add(employee);
+    }
+
+    public List<Employee> getListOfObjectEmployees(){
+        return listOfObjectEmployees;
     }
 
 

@@ -1,16 +1,18 @@
-package Objects;
+package objects;
+
+import java.math.BigDecimal;
 
 public class Employee {
 
     private String name;
     private String department;
-    private float salary;
+    private BigDecimal salary;
 
-    public float getSalary() {
+    public BigDecimal getSalary() {
         return salary;
     }
 
-    public void setSalary(float salary) {
+    public void setSalary(BigDecimal salary) {
         this.salary = salary;
     }
 
