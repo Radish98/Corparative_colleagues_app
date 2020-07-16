@@ -23,8 +23,16 @@ public class DepartmentOperator {
                 for(String key : keySet){
                     if(mapOfDepartments.get(key).getAverageSalary()
                             .compareTo(
-                                    employees.get(i).getSalary())<=0)
-                        returnList.add("Сотрудника " + employees.get(i).getName() + " можно перевести в " + key);
+                                    employees.get(i).getSalary())<=0){
+                        BigDecimal dec1 = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
+//                        mapOfDepartments.get(employees.get(i).getDepartment())
+//                                .deleteObjectEmployee(employees.get(i).getName(), employees.get(i).getSalary());
+                        BigDecimal dec2 = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
+
+                        returnList.add("Если перевести сотрудника "
+                                + employees.get(i).getName()
+                                + " в " + key + ", то средняя ЗП " + "до " + dec1 + " полсе " + dec2);
+                    }
                 }
             }
         }

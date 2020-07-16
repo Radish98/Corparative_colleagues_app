@@ -25,7 +25,7 @@ public class Department {
     }
 
     public BigDecimal getAverageSalary() {
-        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(getCountOfEmployees()),8, RoundingMode.CEILING);
+        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(getCountOfObjectEmployees()),8, RoundingMode.CEILING);
         return averageSalary;
     }
 
@@ -50,8 +50,14 @@ public class Department {
         listOfEmployees.add(fio);
     }
 
-    public int getCountOfEmployees() {
-        return listOfEmployees.size();
+    public void deleteObjectEmployee(String fio, BigDecimal bgdc){
+        listOfObjectEmployees.remove(fio);
+        sumOfSalary = sumOfSalary.subtract(bgdc);
+
+    }
+
+    public int getCountOfObjectEmployees() {
+        return listOfObjectEmployees.size();
     }
 
 }

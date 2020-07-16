@@ -26,9 +26,9 @@ public class FileEditor {
             System.out.println("Полученный файл:");
             while (line != null) {
                 System.out.println(line);
-                if(line.isEmpty() ||){
-
-                }
+//                if(line.isEmpty() ||){
+//
+//                }
                 Department newDepartment = new Department();
                 Employee newEmployee = new Employee();
                 DepartmentOperator departmentOperator = new DepartmentOperator();
