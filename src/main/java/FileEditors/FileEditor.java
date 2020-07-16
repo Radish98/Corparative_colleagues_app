@@ -23,8 +23,12 @@ public class FileEditor {
             BufferedReader reader = new BufferedReader(fr);
             String line = reader.readLine();
             int i  = 0;
+            System.out.println("Полученный файл:");
             while (line != null) {
                 System.out.println(line);
+                if(line.isEmpty() ||){
+
+                }
                 Department newDepartment = new Department();
                 Employee newEmployee = new Employee();
                 DepartmentOperator departmentOperator = new DepartmentOperator();
