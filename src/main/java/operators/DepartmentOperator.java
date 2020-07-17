@@ -25,13 +25,16 @@ public class DepartmentOperator {
                             .compareTo(
                                     employees.get(i).getSalary())<=0){
                         BigDecimal dec1 = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
-//                        mapOfDepartments.get(employees.get(i).getDepartment())
-//                                .deleteObjectEmployee(employees.get(i).getName(), employees.get(i).getSalary());
-                        BigDecimal dec2 = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
+                        Department dep = new Department();
+                        dep.setSumOfSalary(mapOfDepartments.get(employees.get(i).getDepartment()).getSumOfSalary());
+                        dep.setName(mapOfDepartments.get(employees.get(i).getDepartment()).getName());
+                        dep.setEmployeeObject(mapOfDepartments.get(employees.get(i).getDepartment()).getListOfObjectEmployees());
+                        dep.deleteObjectEmployee(employees.get(i), employees.get(i).getSalary());
+                        BigDecimal dec2 = dep.getAverageSalary();
 
-                        returnList.add("Если перевести сотрудника "
+                        returnList.add("Средняя ЗП в " + employees.get(i).getDepartment() + " до перевод сотрудника "
                                 + employees.get(i).getName()
-                                + " в " + key + ", то средняя ЗП " + "до " + dec1 + " полсе " + dec2);
+                                + " в " + key + " составляет " + dec1 + ", а после перевода составит " + dec2);
                     }
                 }
             }

@@ -33,10 +33,13 @@ public class Department {
         listOfObjectEmployees.add(employee);
     }
 
+    public void setEmployeeObject(List<Employee> employee){
+        listOfObjectEmployees.addAll(employee);
+    }
+
     public List<Employee> getListOfObjectEmployees(){
         return listOfObjectEmployees;
     }
-
 
     public BigDecimal getSumOfSalary() {
         return sumOfSalary;
@@ -50,14 +53,18 @@ public class Department {
         listOfEmployees.add(fio);
     }
 
-    public void deleteObjectEmployee(String fio, BigDecimal bgdc){
-        listOfObjectEmployees.remove(fio);
+    public void deleteObjectEmployee(Employee employee, BigDecimal bgdc){
+
+        listOfObjectEmployees.remove(employee);
+        System.out.println(listOfObjectEmployees.size());
         sumOfSalary = sumOfSalary.subtract(bgdc);
+        System.out.println(sumOfSalary);
 
     }
 
     public int getCountOfObjectEmployees() {
-        return listOfObjectEmployees.size();
+        countOfEmployees = listOfObjectEmployees.size();
+        return countOfEmployees;
     }
 
 }

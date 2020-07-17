@@ -1,4 +1,4 @@
-import FileEditors.FileEditor;
+import fileEditors.FileEditor;
 import objects.Department;
 import operators.DepartmentOperator;
 

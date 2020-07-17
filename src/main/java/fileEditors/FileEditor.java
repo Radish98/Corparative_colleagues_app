@@ -1,4 +1,4 @@
-package FileEditors;
+package fileEditors;
 
 import objects.Department;
 import objects.Employee;
