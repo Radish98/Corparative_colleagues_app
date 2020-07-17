@@ -13,28 +13,39 @@ public class DepartmentOperator {
 
     public List<String> findSubstitutionOfCounterparts(Map<String, Department> mapOfDepartments){
         List<Employee> employees  = getAllEmployee(mapOfDepartments);
-        Set<String> keySet = mapOfDepartments.keySet();
+        Set<String> setOfDepartments = mapOfDepartments.keySet();
         List<String> returnList = new ArrayList<>();
 
         for(int i = 0; i < employees.size(); i++){
             if(mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary()
                     .compareTo(
                             employees.get(i).getSalary()) >= 0){
-                for(String key : keySet){
-                    if(mapOfDepartments.get(key).getAverageSalary()
+                for(String department : setOfDepartments){
+                    if(mapOfDepartments.get(department).getAverageSalary()
                             .compareTo(
                                     employees.get(i).getSalary())<=0){
-                        BigDecimal dec1 = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
-                        Department dep = new Department();
-                        dep.setSumOfSalary(mapOfDepartments.get(employees.get(i).getDepartment()).getSumOfSalary());
-                        dep.setName(mapOfDepartments.get(employees.get(i).getDepartment()).getName());
-                        dep.setEmployeeObject(mapOfDepartments.get(employees.get(i).getDepartment()).getListOfObjectEmployees());
-                        dep.deleteObjectEmployee(employees.get(i), employees.get(i).getSalary());
-                        BigDecimal dec2 = dep.getAverageSalary();
+                        BigDecimal salaryBefore = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
+                        Department departmentTransferFrom = new Department();
+                        departmentTransferFrom.setSumOfSalary(mapOfDepartments.get(employees.get(i).getDepartment()).getSumOfSalary());
+                        departmentTransferFrom.setName(mapOfDepartments.get(employees.get(i).getDepartment()).getName());
+                        departmentTransferFrom.setEmployeeObject(mapOfDepartments.get(employees.get(i).getDepartment()).getListOfObjectEmployees());
+                        departmentTransferFrom.deleteObjectEmployee(employees.get(i));
+                        BigDecimal salaryAfter = departmentTransferFrom.getAverageSalary();
 
-                        returnList.add("Средняя ЗП в " + employees.get(i).getDepartment() + " до перевод сотрудника "
+                        returnList.add("Средняя ЗП в " + employees.get(i).getDepartment() + " до перевода сотрудника "
                                 + employees.get(i).getName()
-                                + " в " + key + " составляет " + dec1 + ", а после перевода составит " + dec2);
+                                + " в " + department + " составляет " + salaryBefore + ", а после перевода составит " + salaryAfter);
+
+                        salaryBefore = mapOfDepartments.get(department).getAverageSalary();
+                        Department departmentTransferTo = new Department();
+                        departmentTransferTo.setSumOfSalary(mapOfDepartments.get(department).getSumOfSalary());
+                        departmentTransferTo.setName(mapOfDepartments.get(department).getName());
+                        departmentTransferTo.setEmployeeObject(mapOfDepartments.get(department).getListOfObjectEmployees());
+                        departmentTransferTo.addEmployeeObject(employees.get(i));
+                        salaryAfter = departmentTransferTo.getAverageSalary();
+
+                        returnList.add("Средняя ЗП в " + department + " до перевода сотрудника " + employees.get(i).getName() + " из "
+                                + employees.get(i).getDepartment() + " составляет " + salaryBefore + ", a после перевода составит " + salaryAfter + "\n");
                     }
                 }
             }
@@ -50,17 +61,10 @@ public class DepartmentOperator {
 
         if(mapOfDepartments.get(department)== null){
             newDepartment.setName(department);
-            newDepartment.setSumOfSalary(BigDecimal.valueOf(Float.parseFloat(line.split("/")[2])));
-            newDepartment.addNewEmployee(line.split("/")[0]);
             newDepartment.addEmployeeObject(newEmployee);
             mapOfDepartments.put(department, newDepartment);
         }else{
             mapOfDepartments.get(department).addEmployeeObject(newEmployee);
-            mapOfDepartments.get(department).addNewEmployee(line.split("/")[0]);
-            mapOfDepartments.get(department).setSumOfSalary(BigDecimal.valueOf(Float.
-                    parseFloat(line.split("/")[2]))
-                    .add(mapOfDepartments.get(department).getSumOfSalary()));
-
         }
         return mapOfDepartments;
     }
