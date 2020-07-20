@@ -58,11 +58,11 @@ public class DepartmentOperator {
         if(mapOfDepartments.get(department)== null){
             newDepartment.setName(department);
             newDepartment.addEmployeeObject(new Employee(line.split("/")[0], department,
-                    BigDecimal.valueOf(Float.parseFloat(line.split("/")[2]))));
+                    new BigDecimal(line.split("/")[2])));
             mapOfDepartments.put(department, newDepartment);
         }else{
             mapOfDepartments.get(department).addEmployeeObject(new Employee(line.split("/")[0], department,
-                    BigDecimal.valueOf(Float.parseFloat(line.split("/")[2]))));
+                    new BigDecimal(line.split("/")[2])));
         }
         return mapOfDepartments;
     }

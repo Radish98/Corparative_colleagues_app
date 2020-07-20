@@ -46,7 +46,7 @@ public class FileEditor {
 
     public void writeFile(List<String> list){
         try(FileWriter fwr = new FileWriter("src/main/resources/readylist.txt", false)) {
-            for(String str : list) {
+                for(String str : list) {
                 fwr.write(str);
                 fwr.append('\n');
             }

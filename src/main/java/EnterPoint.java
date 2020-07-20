@@ -12,9 +12,7 @@ public class EnterPoint {
    // private static  File justFile = new File (absolutePath);
 
     public static void main(String[] args) {
-        if(args[0] == null){
-            System.out.println("Не введен адресс файла");
-        }else {
+        try{
             File justFile = new File(args[0]);
             if(justFile.isAbsolute()){
                 System.out.println("Указана абсолютная ссылка");
@@ -24,6 +22,8 @@ public class EnterPoint {
             mapOfDepartments = fileEditor.readTheFile(justFile);
             DepartmentOperator departmentOperator = new DepartmentOperator();
             fileEditor.writeFile(departmentOperator.findSubstitutionOfCounterparts(mapOfDepartments));
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("Не введен адресс файла");
         }
     }
 }

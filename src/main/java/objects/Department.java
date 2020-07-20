@@ -1,6 +1,7 @@
 package objects;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,20 +42,25 @@ public class Department {
         for(Employee newEmployee:listOfObjectEmployees){
             sumOfSalary = sumOfSalary.add(newEmployee.getSalary());
         }
-        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(countOfEmployees));
+        calculateAverageSalary();
     }
 
     public void addEmployeeObject(Employee employee){
         listOfObjectEmployees.add(employee);
         getCountOfObjectEmployees();
         sumOfSalary = sumOfSalary.add(employee.getSalary());
-        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(countOfEmployees));
+        calculateAverageSalary();
     }
 
     public void deleteObjectEmployee(Employee employee){
         listOfObjectEmployees.remove(employee);
         getCountOfObjectEmployees();
         sumOfSalary = sumOfSalary.subtract(employee.getSalary());
-        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(countOfEmployees));
+        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(countOfEmployees), 4, RoundingMode.CEILING);
+    }
+
+    private BigDecimal calculateAverageSalary(){
+        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(getCountOfObjectEmployees()),8, RoundingMode.CEILING);
+        return averageSalary;
     }
 }
