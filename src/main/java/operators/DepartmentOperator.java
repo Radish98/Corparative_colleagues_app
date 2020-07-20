@@ -13,22 +13,21 @@ public class DepartmentOperator {
 
     public List<String> findSubstitutionOfCounterparts(Map<String, Department> mapOfDepartments){
         List<Employee> employees  = getAllEmployee(mapOfDepartments);
-        Set<String> setOfDepartments = mapOfDepartments.keySet();
+        Set<String> namesOfDepartments = mapOfDepartments.keySet();
         List<String> returnList = new ArrayList<>();
 
         for(int i = 0; i < employees.size(); i++){
             if(mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary()
                     .compareTo(
                             employees.get(i).getSalary()) >= 0){
-                for(String department : setOfDepartments){
+                for(String department : namesOfDepartments){
                     if(mapOfDepartments.get(department).getAverageSalary()
                             .compareTo(
                                     employees.get(i).getSalary())<=0){
                         BigDecimal salaryBefore = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
                         Department departmentTransferFrom = new Department();
-                        departmentTransferFrom.setSumOfSalary(mapOfDepartments.get(employees.get(i).getDepartment()).getSumOfSalary());
                         departmentTransferFrom.setName(mapOfDepartments.get(employees.get(i).getDepartment()).getName());
-                        departmentTransferFrom.setEmployeeObject(mapOfDepartments.get(employees.get(i).getDepartment()).getListOfObjectEmployees());
+                        departmentTransferFrom.setEmployeeObjectList(mapOfDepartments.get(employees.get(i).getDepartment()).getListOfObjectEmployees());
                         departmentTransferFrom.deleteObjectEmployee(employees.get(i));
                         BigDecimal salaryAfter = departmentTransferFrom.getAverageSalary();
 
@@ -38,9 +37,8 @@ public class DepartmentOperator {
 
                         salaryBefore = mapOfDepartments.get(department).getAverageSalary();
                         Department departmentTransferTo = new Department();
-                        departmentTransferTo.setSumOfSalary(mapOfDepartments.get(department).getSumOfSalary());
                         departmentTransferTo.setName(mapOfDepartments.get(department).getName());
-                        departmentTransferTo.setEmployeeObject(mapOfDepartments.get(department).getListOfObjectEmployees());
+                        departmentTransferTo.setEmployeeObjectList(mapOfDepartments.get(department).getListOfObjectEmployees());
                         departmentTransferTo.addEmployeeObject(employees.get(i));
                         salaryAfter = departmentTransferTo.getAverageSalary();
 
@@ -53,18 +51,18 @@ public class DepartmentOperator {
         return returnList;
     }
 
-    public Map<String, Department> createMapOfDepartment(Employee newEmployee, Department newDepartment, Map<String, Department> mapOfDepartments, String line){
+    public Map<String, Department> createMapOfDepartment(Map<String, Department> mapOfDepartments, String line){
+        Department newDepartment = new Department();
         String department = line.split("/")[1];
-        newEmployee.setDepartment(department);
-        newEmployee.setName(line.split("/")[0]);
-        newEmployee.setSalary(BigDecimal.valueOf(Float.parseFloat(line.split("/")[2])));
 
         if(mapOfDepartments.get(department)== null){
             newDepartment.setName(department);
-            newDepartment.addEmployeeObject(newEmployee);
+            newDepartment.addEmployeeObject(new Employee(line.split("/")[0], department,
+                    BigDecimal.valueOf(Float.parseFloat(line.split("/")[2]))));
             mapOfDepartments.put(department, newDepartment);
         }else{
-            mapOfDepartments.get(department).addEmployeeObject(newEmployee);
+            mapOfDepartments.get(department).addEmployeeObject(new Employee(line.split("/")[0], department,
+                    BigDecimal.valueOf(Float.parseFloat(line.split("/")[2]))));
         }
         return mapOfDepartments;
     }

@@ -1,7 +1,6 @@
 package fileEditors;
 
 import objects.Department;
-import objects.Employee;
 import operators.DepartmentOperator;
 
 import java.io.BufferedReader;
@@ -29,11 +28,8 @@ public class FileEditor {
 //                if(line.isEmpty() ||){
 //
 //                }
-                Department newDepartment = new Department();
-                Employee newEmployee = new Employee();
                 DepartmentOperator departmentOperator = new DepartmentOperator();
-                mapOfDepartments = departmentOperator.createMapOfDepartment(newEmployee,
-                        newDepartment,mapOfDepartments,line);
+                departmentOperator.createMapOfDepartment(mapOfDepartments,line);
                 line = reader.readLine();
                 i++;
             }
