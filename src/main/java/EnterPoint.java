@@ -8,9 +8,6 @@ import java.util.Map;
 
 public class EnterPoint {
 
- //   private static String absolutePath = "src/main/resources/list.txt";
-   // private static  File justFile = new File (absolutePath);
-
     public static void main(String[] args) {
         try{
             File justFile = new File(args[0]);
@@ -25,6 +22,7 @@ public class EnterPoint {
         }catch (ArrayIndexOutOfBoundsException e){
             System.out.println("Не введен адресс файла");
         }
+
     }
 }
 

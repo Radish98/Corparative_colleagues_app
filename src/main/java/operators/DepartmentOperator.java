@@ -51,20 +51,28 @@ public class DepartmentOperator {
         return returnList;
     }
 
-    public Map<String, Department> createMapOfDepartment(Map<String, Department> mapOfDepartments, String line){
+    public void createMapOfDepartments(Map<String, Department> mapOfDepartments, String line){
         Department newDepartment = new Department();
-        String department = line.split("/")[1];
+        if(line.equals("")) {
+            System.out.println("Предупреждение: Не оставляйте строки пустыми!!!\n");
+        }else {
+            try {
+                String department = line.split("/")[1];
 
-        if(mapOfDepartments.get(department)== null){
-            newDepartment.setName(department);
-            newDepartment.addEmployeeObject(new Employee(line.split("/")[0], department,
-                    new BigDecimal(line.split("/")[2])));
-            mapOfDepartments.put(department, newDepartment);
-        }else{
-            mapOfDepartments.get(department).addEmployeeObject(new Employee(line.split("/")[0], department,
-                    new BigDecimal(line.split("/")[2])));
+                if (mapOfDepartments.get(department) == null) {
+                    newDepartment.setName(department);
+                    newDepartment.addEmployeeObject(new Employee(line.split("/")[0], department,
+                            new BigDecimal(line.split("/")[2])));
+                    mapOfDepartments.put(department, newDepartment);
+                } else {
+                    mapOfDepartments.get(department).addEmployeeObject(new Employee(line.split("/")[0], department,
+                            new BigDecimal(line.split("/")[2])));
+                }
+            }catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("Предупреждение: Неправильный формат записи.\nВычисления произведены без учета данной строки." +
+                        "\nДля корректности расчетов приведите строку в формат ФИО/Отдел/ЗП \n" );
+            }
         }
-        return mapOfDepartments;
     }
 
     public List<Employee> getAllEmployee(Map<String, Department> mapOfDepartments){
@@ -73,5 +81,10 @@ public class DepartmentOperator {
             employees.addAll(mapOfDepartments.get(str).getListOfObjectEmployees());
         }
         return employees;
+    }
+
+    public String checkerOfEmployees(String line){
+
+        return line;
     }
 }

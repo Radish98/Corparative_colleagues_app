@@ -17,30 +17,23 @@ public class FileEditor {
     public Map<String, Department> readTheFile(File justFile) {
         Map<String, Department> mapOfDepartments = new HashMap<>();
 
-        try {
-            FileReader fr = new FileReader(justFile);
+        try(FileReader fr = new FileReader(justFile)) {
             BufferedReader reader = new BufferedReader(fr);
             String line = reader.readLine();
             int i  = 0;
             System.out.println("Полученный файл:");
             while (line != null) {
                 System.out.println(line);
-//                if(line.isEmpty() ||){
-//
-//                }
                 DepartmentOperator departmentOperator = new DepartmentOperator();
-                departmentOperator.createMapOfDepartment(mapOfDepartments,line);
+                departmentOperator.createMapOfDepartments(mapOfDepartments,line);
                 line = reader.readLine();
                 i++;
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Файл не найден");
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e){
-            e.printStackTrace();
+            System.out.println("бла-бла-бла");
         }
-
         return mapOfDepartments;
     }
 
