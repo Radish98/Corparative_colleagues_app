@@ -11,7 +11,6 @@ public class Department {
     private BigDecimal averageSalary = new BigDecimal(0);
     private BigDecimal sumOfSalary = new BigDecimal(0);
     private List<Employee> listOfObjectEmployees = new ArrayList<>();
-    private int countOfEmployees;
 
     public String getName() {
         return name;
@@ -20,16 +19,22 @@ public class Department {
     public BigDecimal getAverageSalary() { return averageSalary;}
 
     public List<Employee> getListOfObjectEmployees(){
-        return listOfObjectEmployees;
+        List<Employee> newList= new ArrayList<>();
+        for(int i = 0; i < listOfObjectEmployees.size(); i++){
+            Employee em = new Employee(listOfObjectEmployees.get(i).getName(),
+                    listOfObjectEmployees.get(i).getDepartment(), listOfObjectEmployees.get(i).getSalary());
+            newList.add(em);
+        }
+        return newList;
     }
+
 
     public BigDecimal getSumOfSalary() {
         return sumOfSalary;
     }
 
     public int getCountOfObjectEmployees() {
-        countOfEmployees = listOfObjectEmployees.size();
-        return countOfEmployees;
+       return listOfObjectEmployees.size();
     }
 
     public void setName(String name) {
@@ -37,8 +42,10 @@ public class Department {
     }
 
     public void setEmployeeObjectList(List<Employee> employee){
+        listOfObjectEmployees.clear();
+        sumOfSalary = new BigDecimal(0);
+        averageSalary = new BigDecimal(0);
         listOfObjectEmployees.addAll(employee);
-        getCountOfObjectEmployees();
         for(Employee newEmployee:listOfObjectEmployees){
             sumOfSalary = sumOfSalary.add(newEmployee.getSalary());
         }
@@ -47,20 +54,17 @@ public class Department {
 
     public void addEmployeeObject(Employee employee){
         listOfObjectEmployees.add(employee);
-        getCountOfObjectEmployees();
         sumOfSalary = sumOfSalary.add(employee.getSalary());
         calculateAverageSalary();
     }
 
     public void deleteObjectEmployee(Employee employee){
         listOfObjectEmployees.remove(employee);
-        getCountOfObjectEmployees();
         sumOfSalary = sumOfSalary.subtract(employee.getSalary());
-        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(countOfEmployees), 4, RoundingMode.CEILING);
+        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(getCountOfObjectEmployees()), 2, RoundingMode.CEILING);
     }
 
-    private BigDecimal calculateAverageSalary(){
-        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(getCountOfObjectEmployees()),8, RoundingMode.CEILING);
-        return averageSalary;
+    protected void calculateAverageSalary(){
+        averageSalary = sumOfSalary.divide(BigDecimal.valueOf(getCountOfObjectEmployees()),2, RoundingMode.CEILING);
     }
 }
