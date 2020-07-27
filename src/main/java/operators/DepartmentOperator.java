@@ -114,12 +114,29 @@ public class DepartmentOperator {
     public static String checkerOfEmployees (String line) throws Exception {
 
         if(line.equals(""))
-            throw new Exception("Предупреждение: Не оставляйте строки пустыми!!!\n");
+            throw new Exception("\nПредупреждение: Не оставляйте строки пустыми!!!\n");
         String [] splitLine = line.split("/");
         if(splitLine[0].trim().length() == 0)
-            throw new Exception("Неверно заполнено ФИО");
+            throw new Exception("\nОшибка: Отсутствует ФИО." +
+                    "\nДанный сотрудник не учитывается при расчете\n");
         if(splitLine[1].trim().length() == 0) {
-            throw new Exception("Неверно заполнен отдел");
+            throw new Exception("\nОшибка: Отсутствует отдел." +
+                    "\nДанный сотрудник не учитывается при расчете\n");
+        }
+        try {
+            BigDecimal testBgdcm = new BigDecimal(splitLine[2].trim());
+
+            if(testBgdcm.compareTo(BigDecimal.valueOf(0)) < 0)
+                throw  new Exception("\nОшибка: Отрицательная заработная плата." +
+                        "\nДанный сотрудник не учитывается при расчете\n");
+            if(testBgdcm.scale() > 2)
+                throw new Exception("\nОшибка: Неверная точность в заработной плате." +
+                        "\nДанный сотрудник не учитывается при расчете" +
+                        "\nУкажите точность до сотых\n");
+        }catch (NumberFormatException ex){
+            throw new Exception("\nОшибка: Неверный формат заработной платы." +
+                    "\nДанный сотрудник не учитывается при расчете" +
+                    "\nУкажите число\n");
         }
         return line;
     }
