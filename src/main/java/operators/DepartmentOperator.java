@@ -19,22 +19,22 @@ public class DepartmentOperator {
         List<String> returnList = new ArrayList<>();
 
 
-        for(Department department:allDepartments ){
-            List<Employee> listOfEmployees = department.getListOfObjectEmployees();
+        for(Department departmentTransferFrom:allDepartments ){
+            List<Employee> listOfEmployees = departmentTransferFrom.getListOfObjectEmployees();
             for(Employee employee:listOfEmployees){
-                if(department.getAverageSalary().compareTo(employee.getSalary()) >= 0){
-                    for(Department departmentTo:allDepartments){
-                        if(departmentTo.getAverageSalary().compareTo(employee.getSalary())<= 0){
-                            BigDecimal averageSalaryAfterTransfer = (department.getSumOfSalary().subtract(employee.getSalary()))
+                if(departmentTransferFrom.getAverageSalary().compareTo(employee.getSalary()) > 0){
+                    for(Department departmentTransferTo:allDepartments){
+                        if(departmentTransferTo.getAverageSalary().compareTo(employee.getSalary())< 0){
+                            BigDecimal averageSalaryAfterTransfer = (departmentTransferFrom.getSumOfSalary().subtract(employee.getSalary()))
                                     .divide(BigDecimal.valueOf(listOfEmployees.size() - 1), 2, RoundingMode.CEILING);
-                            returnList.add("Средняя ЗП в " + department.getName() + " до перевода сотрудника "
+                            returnList.add("Средняя ЗП в " + departmentTransferFrom.getName() + " до перевода сотрудника "
                                     + employee.getName()
-                                    + " в " + departmentTo.getName() + " составляет " + department.getAverageSalary()
+                                    + " в " + departmentTransferTo.getName() + " составляет " + departmentTransferFrom.getAverageSalary()
                                     + ", а после перевода составит " + averageSalaryAfterTransfer);
-                            averageSalaryAfterTransfer = ((departmentTo.getSumOfSalary().add(employee.getSalary())))
+                            averageSalaryAfterTransfer = ((departmentTransferTo.getSumOfSalary().add(employee.getSalary())))
                                     .divide(BigDecimal.valueOf(listOfEmployees.size() + 1), 2, RoundingMode.CEILING);
-                            returnList.add("Средняя ЗП в " + departmentTo.getName() + " до перевода сотрудника " + employee.getName() + " из "
-                                    + department.getName() + " составляет " + departmentTo.getAverageSalary()
+                            returnList.add("Средняя ЗП в " + departmentTransferTo.getName() + " до перевода сотрудника " + employee.getName() + " из "
+                                    + departmentTransferFrom.getName() + " составляет " + departmentTransferTo.getAverageSalary()
                                     + ", a после перевода составит " + averageSalaryAfterTransfer +  "\n");
                         }
                     }
@@ -79,30 +79,26 @@ public class DepartmentOperator {
 
     public static void fillMapOfDepartments(Map<String, Department> mapOfDepartments, String line){
         try {
-            if(line.equals("")) {
-                System.out.println("bl");
-                throw new Exception("Предупреждение: Не оставляйте строки пустыми!!!\n");
-            }else {
-                Department newDepartment;
-                String [] splitArray = line.split("/");
+            checkerOfEmployees(line);
+            Department newDepartment;
+            String [] splitArray = line.split("/");
 
-                if (mapOfDepartments.get(splitArray[1]) == null) {
-                    newDepartment = new Department();
-                    newDepartment.setName(splitArray[1]);
-                    newDepartment.addEmployeeObject(new Employee(splitArray[0], splitArray[1],
-                            new BigDecimal(splitArray[2])));
-                    mapOfDepartments.put(splitArray[1], newDepartment);
-                } else {
-                    mapOfDepartments.get(splitArray[1]).addEmployeeObject(new Employee(splitArray[0], splitArray[1],
-                            new BigDecimal(splitArray[2])));
-                }
+            if (mapOfDepartments.get(splitArray[1].trim()) == null) {
+                newDepartment = new Department();
+                newDepartment.setName(splitArray[1].trim());
+                newDepartment.addEmployeeObject(new Employee(splitArray[0].trim(), splitArray[1].trim(),
+                        new BigDecimal(splitArray[2].trim())));
+                mapOfDepartments.put(splitArray[1].trim(), newDepartment);
+            } else {
+                mapOfDepartments.get(splitArray[1].trim()).addEmployeeObject(new Employee(splitArray[0].trim(), splitArray[1].trim(),
+                        new BigDecimal(splitArray[2].trim())));
             }
 
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Предупреждение: Неправильный формат записи.\nВычисления произведены без учета данной строки." +
                     "\nДля корректности расчетов приведите строку в формат ФИО/Отдел/ЗП \n");
         } catch (Exception ex){
-            System.out.println( ex+ "ala");
+            System.out.println(ex.getMessage());
         }
 
     }
@@ -115,8 +111,16 @@ public class DepartmentOperator {
         return employees;
     }
 
-    public String checkerOfEmployees(String line){
+    public static String checkerOfEmployees (String line) throws Exception {
 
+        if(line.equals(""))
+            throw new Exception("Предупреждение: Не оставляйте строки пустыми!!!\n");
+        String [] splitLine = line.split("/");
+        if(splitLine[0].trim().length() == 0)
+            throw new Exception("Неверно заполнено ФИО");
+        if(splitLine[1].trim().length() == 0) {
+            throw new Exception("Неверно заполнен отдел");
+        }
         return line;
     }
 }
