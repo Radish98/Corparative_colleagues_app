@@ -24,10 +24,10 @@ public class DepartmentOperator {
             }
             for(String str: stringOfEmployees.split("/")){
                 if(!str.equals("")) {
-                    findMultiSubstitutions("/" + str, stringOfEmployees.replaceFirst(str, ""), returnList,mapOfEmployees, dp.getAverageSalary());
+                    findMultiSubstitutions("/" + str, stringOfEmployees.replaceFirst(str, ""),
+                            returnList,mapOfEmployees, dp.getAverageSalary(), allDepartments);
                 }
             }
-            returnList.add("\n");
         }
         return returnList;
     }
@@ -100,23 +100,36 @@ public class DepartmentOperator {
     }
 
     public static void findMultiSubstitutions(String prefix,String stringOfAllEmployees, List<String> returnList,
-                                              Map<String,Employee> mapOfEmployees, BigDecimal averageSalary){
+                                              Map<String,Employee> mapOfEmployees,
+                                              BigDecimal averageSalary, Collection<Department> allDepartments){
         BigDecimal differenceAmount = new BigDecimal("0");
+        BigDecimal sumOfPrefixSalaries = new BigDecimal("0");
+        int countOfPrefixEmployees = 0;
+        String nameOfDepartment = "";
         if(!prefix.equals("")){
             for(String str2 : prefix.split("/")){
                 if(!str2.equals("")){
                     differenceAmount = differenceAmount.add(
                             mapOfEmployees.get(str2).getSalary()
                                     .subtract(averageSalary));
+                    sumOfPrefixSalaries = sumOfPrefixSalaries.add(mapOfEmployees.get(str2).getSalary());
+                    countOfPrefixEmployees++;
+                    if(nameOfDepartment.equals("")){
+                        nameOfDepartment = mapOfEmployees.get(str2).getDepartment();
+                    }
                 }
             }
         }
         if(differenceAmount.compareTo(new BigDecimal("0")) < 0)
-            returnList.add("Перевод действителен:"  + prefix);
+            for(Department department: allDepartments){
+                if(sumOfPrefixSalaries.divide(BigDecimal.valueOf(countOfPrefixEmployees)).compareTo(department.getAverageSalary())>0) {
+                    returnList.add("Перевод: " + prefix + " из " + nameOfDepartment + " в "+ department.getName());
+                }
+            }
         for(String str: stringOfAllEmployees.split("/")){
             if(!str.equals("")) {
                 findMultiSubstitutions(prefix + "/" + str,
-                        stringOfAllEmployees.replaceFirst(str, ""), returnList, mapOfEmployees, averageSalary);
+                        stringOfAllEmployees.replaceFirst(str, ""), returnList, mapOfEmployees, averageSalary, allDepartments);
             }
 
         }
