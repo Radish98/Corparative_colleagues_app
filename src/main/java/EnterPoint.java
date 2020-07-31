@@ -20,6 +20,7 @@ public class EnterPoint {
             }
             FileEditor fileEditor = new FileEditor();
             Map<String, Department> mapOfDepartments = fileEditor.readTheFile(enterFile);
+            DepartmentOperator.fillDepartmentsList(mapOfDepartments);
             fileEditor.writeFile(DepartmentOperator.findSubstitutionOfCounterparts(mapOfDepartments), outputFile);
         }catch (ArrayIndexOutOfBoundsException e){
             System.out.println(e.getMessage());

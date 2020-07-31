@@ -4,76 +4,31 @@ import objects.Department;
 import objects.Employee;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DepartmentOperator {
 
     public static List<String> findSubstitutionOfCounterparts(Map<String, Department> mapOfDepartments){
-//        List<Employee> employees  = getAllEmployee(mapOfDepartments);
-//        Set<String> namesOfDepartments = mapOfDepartments.keySet();
         Collection<Department> allDepartments = mapOfDepartments.values();
         List<String> returnList = new ArrayList<>();
-
-
-        for(Department departmentTransferFrom:allDepartments ){
-            List<Employee> listOfEmployees = departmentTransferFrom.getListOfObjectEmployees();
-            for(Employee employee:listOfEmployees){
-                if(departmentTransferFrom.getAverageSalary().compareTo(employee.getSalary()) > 0){
-                    for(Department departmentTransferTo:allDepartments){
-                        if(departmentTransferTo.getAverageSalary().compareTo(employee.getSalary())< 0){
-                            BigDecimal averageSalaryAfterTransfer = (departmentTransferFrom.getSumOfSalary().subtract(employee.getSalary()))
-                                    .divide(BigDecimal.valueOf(listOfEmployees.size() - 1), 2, RoundingMode.CEILING);
-                            returnList.add("Средняя ЗП в " + departmentTransferFrom.getName() + " до перевода сотрудника "
-                                    + employee.getName()
-                                    + " в " + departmentTransferTo.getName() + " составляет " + departmentTransferFrom.getAverageSalary()
-                                    + ", а после перевода составит " + averageSalaryAfterTransfer);
-                            averageSalaryAfterTransfer = ((departmentTransferTo.getSumOfSalary().add(employee.getSalary())))
-                                    .divide(BigDecimal.valueOf(listOfEmployees.size() + 1), 2, RoundingMode.CEILING);
-                            returnList.add("Средняя ЗП в " + departmentTransferTo.getName() + " до перевода сотрудника " + employee.getName() + " из "
-                                    + departmentTransferFrom.getName() + " составляет " + departmentTransferTo.getAverageSalary()
-                                    + ", a после перевода составит " + averageSalaryAfterTransfer +  "\n");
-                        }
-                    }
+        for(Department dp : allDepartments){
+            Map <String, Employee> mapOfEmployees = new HashMap<>();
+            String stringOfEmployees = new String();
+            for(Employee em:dp.getListOfObjectEmployees()){
+                mapOfEmployees.put(em.getName(),em);
+                stringOfEmployees = stringOfEmployees + em.getName() + "/";
+            }
+            for(String str: stringOfEmployees.split("/")){
+                if(!str.equals("")) {
+                    findMultiSubstitutions("/" + str, stringOfEmployees.replaceFirst(str, ""), returnList,mapOfEmployees, dp.getAverageSalary());
                 }
             }
+            returnList.add("\n");
         }
-
-//        for(int i = 0; i < employees.size(); i++){
-//            if(mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary()
-//                    .compareTo(
-//                            employees.get(i).getSalary()) >= 0){
-//                for(String department : namesOfDepartments){
-//                    if(mapOfDepartments.get(department).getAverageSalary()
-//                            .compareTo(
-//                                    employees.get(i).getSalary())<=0){
-//                        BigDecimal salaryBefore = mapOfDepartments.get(employees.get(i).getDepartment()).getAverageSalary();
-//                        Department departmentTransferFrom = new Department();
-//                        departmentTransferFrom.setName(mapOfDepartments.get(employees.get(i).getDepartment()).getName());
-//                        departmentTransferFrom.setEmployeeObjectList(mapOfDepartments.get(employees.get(i).getDepartment()).getListOfObjectEmployees());
-//                        departmentTransferFrom.deleteObjectEmployee(employees.get(i));
-//                        BigDecimal salaryAfter = departmentTransferFrom.getAverageSalary();
-//
-//                        returnList.add("Средняя ЗП в " + employees.get(i).getDepartment() + " до перевода сотрудника "
-//                                + employees.get(i).getName()
-//                                + " в " + department + " составляет " + salaryBefore + ", а после перевода составит " + salaryAfter);
-//
-//                        salaryBefore = mapOfDepartments.get(department).getAverageSalary();
-//                        Department departmentTransferTo = new Department();
-//                        departmentTransferTo.setName(mapOfDepartments.get(department).getName());
-//                        departmentTransferTo.setEmployeeObjectList(mapOfDepartments.get(department).getListOfObjectEmployees());
-//                        departmentTransferTo.addEmployeeObject(employees.get(i));
-//                        salaryAfter = departmentTransferTo.getAverageSalary();
-//
-//                        returnList.add("Средняя ЗП в " + department + " до перевода сотрудника " + employees.get(i).getName() + " из "
-//                                + employees.get(i).getDepartment() + " составляет " + salaryBefore + ", a после перевода составит " + salaryAfter + "\n");
-//                    }
-//                }
-//            }
-//        }
         return returnList;
     }
 
@@ -82,8 +37,7 @@ public class DepartmentOperator {
             checkerOfEmployees(line);
             Department newDepartment;
             String [] splitArray = line.split("/");
-
-            if (mapOfDepartments.get(splitArray[1].trim()) == null) {
+            if (!mapOfDepartments.containsKey(splitArray[1].trim())) {
                 newDepartment = new Department();
                 newDepartment.setName(splitArray[1].trim());
                 newDepartment.addEmployeeObject(new Employee(splitArray[0].trim(), splitArray[1].trim(),
@@ -103,14 +57,18 @@ public class DepartmentOperator {
 
     }
 
-    public static List<Employee> getAllEmployee(Map<String, Department> mapOfDepartments){
-        List<Employee> employees = new ArrayList<>();
-        for(String str : mapOfDepartments.keySet()) {
-            employees.addAll(mapOfDepartments.get(str).getListOfObjectEmployees());
-        }
-        return employees;
-    }
 
+    public static void fillDepartmentsList(Map<String, Department> mapOfDepartments){
+        Collection<Department> departmentsCollection = mapOfDepartments.values();
+        for(Department dp : departmentsCollection){
+            for( Employee employee : dp.getListOfObjectEmployees()){
+                if(employee.getSalary().compareTo(dp.getAverageSalary()) >= 0)
+                    mapOfDepartments.get(dp.getName()).addEmployeeHigherThanAverage(employee);
+                if(employee.getSalary().compareTo(dp.getAverageSalary())< 0)
+                    mapOfDepartments.get(dp.getName()).addEmployeeLowerThanAverage(employee);
+            }
+        }
+    }
     public static String checkerOfEmployees (String line) throws Exception {
 
         if(line.equals(""))
@@ -140,4 +98,59 @@ public class DepartmentOperator {
         }
         return line;
     }
+
+    public static void findMultiSubstitutions(String prefix,String stringOfAllEmployees, List<String> returnList,
+                                              Map<String,Employee> mapOfEmployees, BigDecimal averageSalary){
+        BigDecimal differenceAmount = new BigDecimal("0");
+        if(!prefix.equals("")){
+            for(String str2 : prefix.split("/")){
+                if(!str2.equals("")){
+                    differenceAmount = differenceAmount.add(
+                            mapOfEmployees.get(str2).getSalary()
+                                    .subtract(averageSalary));
+                }
+            }
+        }
+        if(differenceAmount.compareTo(new BigDecimal("0")) < 0)
+            returnList.add("Перевод действителен:"  + prefix);
+        for(String str: stringOfAllEmployees.split("/")){
+            if(!str.equals("")) {
+                findMultiSubstitutions(prefix + "/" + str,
+                        stringOfAllEmployees.replaceFirst(str, ""), returnList, mapOfEmployees, averageSalary);
+            }
+
+        }
+
+    }
+
+    public static List<Employee> deleterElementFromCopy(List<Employee> list, Employee employee){
+        List <Employee> copyList = new ArrayList<>();
+        for(int i = 0; i < list.size(); i++) {
+            Employee em = new Employee(list.get(i).getName(),
+                    list.get(i).getDepartment(), list.get(i).getSalary());
+            copyList.add(em);
+        }
+
+        copyList.remove(0);
+        return copyList;
+    }
+    /*
+                    if(departmentTransferFrom.getAverageSalary().compareTo(employee.getSalary()) > 0){
+                    for(Department departmentTransferTo:allDepartments){
+                        if(departmentTransferTo.getAverageSalary().compareTo(employee.getSalary())< 0){
+                            BigDecimal averageSalaryAfterTransfer = (departmentTransferFrom.getSumOfSalary().subtract(employee.getSalary()))
+                                    .divide(BigDecimal.valueOf(listOfEmployees.size() - 1), 2, RoundingMode.CEILING);
+                            returnList.add("Средняя ЗП в " + departmentTransferFrom.getName() + " до перевода сотрудника "
+                                    + employee.getName()
+                                    + " в " + departmentTransferTo.getName() + " составляет " + departmentTransferFrom.getAverageSalary()
+                                    + ", а после перевода составит " + averageSalaryAfterTransfer);
+                            averageSalaryAfterTransfer = ((departmentTransferTo.getSumOfSalary().add(employee.getSalary())))
+                                    .divide(BigDecimal.valueOf(listOfEmployees.size() + 1), 2, RoundingMode.CEILING);
+                            returnList.add("Средняя ЗП в " + departmentTransferTo.getName() + " до перевода сотрудника " + employee.getName() + " из "
+                                    + departmentTransferFrom.getName() + " составляет " + departmentTransferTo.getAverageSalary()
+                                    + ", a после перевода составит " + averageSalaryAfterTransfer +  "\n");
+                        }
+                    }
+                }
+     */
 }
