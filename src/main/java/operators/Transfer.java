@@ -17,14 +17,23 @@ public class Transfer {
         for( Department department : departmentsCollection){
             List<Employee> allEmployeesList = department.getListOfObjectEmployees();
             List<Employee> lowSalaryEmployees= department.getListOfEmployeesLowerThanAverage();
+            List<Employee> highSalaryEmployees = department.getListOfEmployeesHigherThanAverage();
             List<Employee> checkList = new ArrayList<>();
             int i = 0;
-            while (i < allEmployeesList.size()){
-                checkList.add(allEmployeesList.get(i));
-//                System.out.println(allEmployeesList.get(i).getName());
+            while (i < lowSalaryEmployees.size()){
+                checkList.add(lowSalaryEmployees.get(i));
+                System.out.println(lowSalaryEmployees.get(i).getName());
                 i++;
                 checkingTransferOfEmployee(checkList,department, departmentsCollection,returnList);
-                recursionOfFindSubstitutions(i, allEmployeesList, returnList, checkList, department, departmentsCollection);
+                recursionOfFindSubstitutions(i, lowSalaryEmployees, returnList, checkList, department, departmentsCollection);
+                checkList.clear();
+            }
+            while (i < lowSalaryEmployees.size()){
+                checkList.add(lowSalaryEmployees.get(i));
+                System.out.println(allEmployeesList.get(i).getName());
+                i++;
+                checkingTransferOfEmployee(checkList,department, departmentsCollection,returnList);
+                recursionOfFindSubstitutions(0, highSalaryEmployees, returnList, checkList, department, departmentsCollection);
                 checkList.clear();
             }
         }
@@ -41,10 +50,10 @@ public class Transfer {
             while (allEmployeeList.size() > i) {
                 myChecklist.addAll(checkList);
                 myChecklist.add(allEmployeeList.get(i));
-//                for(Employee employee:myChecklist){
-//                    System.out.print(employee.getName()+ "/");
-//                }
-//                System.out.println("\n");
+                for(Employee employee:myChecklist){
+                    System.out.print(employee.getName()+ "/");
+                }
+                System.out.println("\n");
                 checkingTransferOfEmployee(myChecklist, department,departments, returnList);
                 i++;
                 recursionOfFindSubstitutions(i, allEmployeeList, returnList, myChecklist, department, departments);
