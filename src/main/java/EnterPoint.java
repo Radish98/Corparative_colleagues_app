@@ -1,6 +1,7 @@
 import fileeditors.FileEditor;
 import objects.Department;
 import operators.DepartmentOperator;
+import operators.Transfer;
 
 import java.io.File;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class EnterPoint {
             FileEditor fileEditor = new FileEditor();
             Map<String, Department> mapOfDepartments = fileEditor.readTheFile(enterFile);
             DepartmentOperator.fillDepartmentsList(mapOfDepartments);
-            fileEditor.writeFile(DepartmentOperator.findSubstitution(mapOfDepartments), outputFile);
+            fileEditor.writeFile(Transfer.findSubstitution(mapOfDepartments), outputFile);
         }catch (ArrayIndexOutOfBoundsException e){
             System.out.println(e.getMessage());
         }
