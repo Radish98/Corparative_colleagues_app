@@ -4,31 +4,32 @@ import objects.Department;
 import objects.Employee;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DepartmentOperator {
 
-    public static List<String> findSubstitutionOfCounterparts(Map<String, Department> mapOfDepartments){
-        Collection<Department> allDepartments = mapOfDepartments.values();
+    public static List<String> findSubstitution(Map<String, Department> mapOfDepartments) {
         List<String> returnList = new ArrayList<>();
-        for(Department dp : allDepartments){
-            Map <String, Employee> mapOfEmployees = new HashMap<>();
-            String stringOfEmployees = new String();
-            for(Employee em:dp.getListOfObjectEmployees()){
-                mapOfEmployees.put(em.getName(),em);
-                stringOfEmployees = stringOfEmployees + em.getName() + "/";
-            }
-            for(String str: stringOfEmployees.split("/")){
-                if(!str.equals("")) {
-                    findMultiSubstitutions("/" + str, stringOfEmployees.replaceFirst(str, ""),
-                            returnList,mapOfEmployees, dp.getAverageSalary(), allDepartments);
-                }
+        Collection<Department> departmentsCollection = mapOfDepartments.values();
+        for( Department department : departmentsCollection){
+            List<Employee> allEmployeesList = department.getListOfObjectEmployees();
+            List<Employee> lowSalaryEmployees= department.getListOfEmployeesLowerThanAverage();
+            List<Employee> checkList = new ArrayList<>();
+            int i = 0;
+            while (i < allEmployeesList.size()){
+                checkList.add(allEmployeesList.get(i));
+                System.out.println(allEmployeesList.get(i).getName());
+                i++;
+                checkingTransferOfEmployee(checkList,department, departmentsCollection,returnList);
+                recursionOfFindSubstitutions(i, allEmployeesList, returnList, checkList, department, departmentsCollection);
+                checkList.clear();
             }
         }
+
         return returnList;
     }
 
@@ -61,7 +62,7 @@ public class DepartmentOperator {
     public static void fillDepartmentsList(Map<String, Department> mapOfDepartments){
         Collection<Department> departmentsCollection = mapOfDepartments.values();
         for(Department dp : departmentsCollection){
-            for( Employee employee : dp.getListOfObjectEmployees()){
+            for(Employee employee : dp.getListOfObjectEmployees()){
                 if(employee.getSalary().compareTo(dp.getAverageSalary()) >= 0)
                     mapOfDepartments.get(dp.getName()).addEmployeeHigherThanAverage(employee);
                 if(employee.getSalary().compareTo(dp.getAverageSalary())< 0)
@@ -99,53 +100,64 @@ public class DepartmentOperator {
         return line;
     }
 
-    public static void findMultiSubstitutions(String prefix,String stringOfAllEmployees, List<String> returnList,
-                                              Map<String,Employee> mapOfEmployees,
-                                              BigDecimal averageSalary, Collection<Department> allDepartments){
-        BigDecimal differenceAmount = new BigDecimal("0");
-        BigDecimal sumOfPrefixSalaries = new BigDecimal("0");
-        int countOfPrefixEmployees = 0;
-        String nameOfDepartment = "";
-        if(!prefix.equals("")){
-            for(String str2 : prefix.split("/")){
-                if(!str2.equals("")){
-                    differenceAmount = differenceAmount.add(
-                            mapOfEmployees.get(str2).getSalary()
-                                    .subtract(averageSalary));
-                    sumOfPrefixSalaries = sumOfPrefixSalaries.add(mapOfEmployees.get(str2).getSalary());
-                    countOfPrefixEmployees++;
-                    if(nameOfDepartment.equals("")){
-                        nameOfDepartment = mapOfEmployees.get(str2).getDepartment();
-                    }
+    public static void recursionOfFindSubstitutions(int index, List<Employee> allEmployeeList,
+                                                    List<String> returnList, List<Employee> checkList,
+                                                    Department department,
+                                                    Collection<Department> departments){
+        int i = index;
+        List<Employee> myChecklist = new ArrayList<>();
+        if(allEmployeeList.size()>i) {
+            while (allEmployeeList.size() > i) {
+                myChecklist.addAll(checkList);
+                myChecklist.add(allEmployeeList.get(i));
+                for(Employee employee:myChecklist){
+                    System.out.print(employee.getName()+ "/");
                 }
-            }
-        }
-        if(differenceAmount.compareTo(new BigDecimal("0")) < 0)
-            for(Department department: allDepartments){
-                if(sumOfPrefixSalaries.divide(BigDecimal.valueOf(countOfPrefixEmployees)).compareTo(department.getAverageSalary())>0) {
-                    returnList.add("Перевод: " + prefix + " из " + nameOfDepartment + " в "+ department.getName());
-                }
-            }
-        for(String str: stringOfAllEmployees.split("/")){
-            if(!str.equals("")) {
-                findMultiSubstitutions(prefix + "/" + str,
-                        stringOfAllEmployees.replaceFirst(str, ""), returnList, mapOfEmployees, averageSalary, allDepartments);
-            }
+                System.out.println("\n");
 
+                checkingTransferOfEmployee(myChecklist, department,departments, returnList);
+                i++;
+                recursionOfFindSubstitutions(i, allEmployeeList, returnList, myChecklist, department, departments);
+                myChecklist.clear();
+            }
         }
 
     }
 
-    public static List<Employee> deleterElementFromCopy(List<Employee> list, Employee employee){
-        List <Employee> copyList = new ArrayList<>();
-        for(int i = 0; i < list.size(); i++) {
-            Employee em = new Employee(list.get(i).getName(),
-                    list.get(i).getDepartment(), list.get(i).getSalary());
-            copyList.add(em);
-        }
+    public static void checkingTransferOfEmployee(List<Employee> checkList, Department department,
+                                                  Collection<Department> departments, List<String> returnList){
+        try {
+            BigDecimal sumOfCheckListSalary = new BigDecimal(0);
+            BigDecimal averageSalary = department.getAverageSalary();
+            String names = "";
+            for(Employee employee:checkList){
+                sumOfCheckListSalary = sumOfCheckListSalary.add(employee.getSalary());
+                names= names +  employee.getName() + ", ";
+            }
+            if(averageSalary.compareTo(sumOfCheckListSalary.divide(BigDecimal.valueOf(checkList.size()), RoundingMode.DOWN)) > 0
+                    & BigDecimal.valueOf(department.getCountOfObjectEmployees()).compareTo(BigDecimal.valueOf(checkList.size()))!=0) {
+                for (Department dep : departments) {
+                    if(dep.getAverageSalary().compareTo(sumOfCheckListSalary.divide(BigDecimal.valueOf(checkList.size()), RoundingMode.DOWN))< 0){
+                        returnList.add("Перевод сотрудников: " + names + " из "
+                                + department.getName()+ "(ЗП до/после["+ department.getAverageSalary()
+                                + "/" + (department.getSumOfSalary()
+                                .subtract(sumOfCheckListSalary))
+                                .divide(BigDecimal.valueOf(department.getCountOfObjectEmployees())
+                                        .subtract(BigDecimal.valueOf(checkList.size())), RoundingMode.DOWN) + "]"
+                                + " в "
+                                + dep.getName()
+                                + "(ЗП до/после["+ dep.getAverageSalary()
+                                + "/" + (dep.getSumOfSalary()
+                                .add(sumOfCheckListSalary))
+                                .divide(BigDecimal.valueOf(dep.getCountOfObjectEmployees())
+                                        .add(BigDecimal.valueOf(checkList.size())), RoundingMode.DOWN) + "]" + "\n");
+                    }
+                }
+            }
 
-        copyList.remove(0);
-        return copyList;
+        }catch (ArrayIndexOutOfBoundsException ex){
+            System.out.println("Ошибка программиста:\n" + ex.getMessage());
+        }
     }
     /*
                     if(departmentTransferFrom.getAverageSalary().compareTo(employee.getSalary()) > 0){
