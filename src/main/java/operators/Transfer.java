@@ -15,27 +15,28 @@ public class Transfer {
         List<String> returnList = new ArrayList<>();
         Collection<Department> departmentsCollection = mapOfDepartments.values();
         for( Department department : departmentsCollection){
-            List<Employee> allEmployeesList = department.getListOfObjectEmployees();
-            List<Employee> lowSalaryEmployees= department.getListOfEmployeesLowerThanAverage();
+            List<Employee> allEmployees= department.getListOfObjectEmployees();
             List<Employee> highSalaryEmployees = department.getListOfEmployeesHigherThanAverage();
             List<Employee> checkList = new ArrayList<>();
             int i = 0;
-            while (i < lowSalaryEmployees.size()){
-                checkList.add(lowSalaryEmployees.get(i));
-                System.out.println(lowSalaryEmployees.get(i).getName());
+            while (i < allEmployees.size()){
+                checkList.add(allEmployees.get(i));
+//                System.out.println(allEmployees.get(i).getName());
                 i++;
                 checkingTransferOfEmployee(checkList,department, departmentsCollection,returnList);
-                recursionOfFindSubstitutions(i, lowSalaryEmployees, returnList, checkList, department, departmentsCollection);
+                recursionOfFindSubstitutions(i, allEmployees, returnList, checkList, department, departmentsCollection);
                 checkList.clear();
             }
-            while (i < lowSalaryEmployees.size()){
-                checkList.add(lowSalaryEmployees.get(i));
-                System.out.println(allEmployeesList.get(i).getName());
-                i++;
-                checkingTransferOfEmployee(checkList,department, departmentsCollection,returnList);
-                recursionOfFindSubstitutions(0, highSalaryEmployees, returnList, checkList, department, departmentsCollection);
-                checkList.clear();
-            }
+//            i=0;
+//            returnList.add("now high");
+//            while (i < allEmployees.size()){
+//                checkList.add(allEmployees.get(i));
+////                System.out.println(allEmployeesList.get(i).getName());
+//                i++;
+//                checkingTransferOfEmployee(checkList,department, departmentsCollection,returnList);
+//                recursionOfFindSubstitutions(0, highSalaryEmployees, returnList, checkList, department, departmentsCollection);
+//                checkList.clear();
+//            }
         }
         return returnList;
     }
@@ -50,10 +51,10 @@ public class Transfer {
             while (allEmployeeList.size() > i) {
                 myChecklist.addAll(checkList);
                 myChecklist.add(allEmployeeList.get(i));
-                for(Employee employee:myChecklist){
-                    System.out.print(employee.getName()+ "/");
-                }
-                System.out.println("\n");
+//                for(Employee employee:myChecklist){
+//                    System.out.print(employee.getName()+ "/");
+//                }
+//                System.out.println("\n");
                 checkingTransferOfEmployee(myChecklist, department,departments, returnList);
                 i++;
                 recursionOfFindSubstitutions(i, allEmployeeList, returnList, myChecklist, department, departments);
@@ -72,7 +73,7 @@ public class Transfer {
             names= names +  employee.getName() + ", ";
         }
         if(averageSalary.compareTo(sumOfCheckListSalary.divide(BigDecimal.valueOf(checkList.size()), RoundingMode.DOWN)) > 0
-                & BigDecimal.valueOf(department.getCountOfObjectEmployees()).compareTo(BigDecimal.valueOf(checkList.size()))!=0) {
+                && BigDecimal.valueOf(department.getCountOfObjectEmployees()).compareTo(BigDecimal.valueOf(checkList.size()))!=0) {
             for (Department dep : departments) {
                 if(dep.getAverageSalary().compareTo(sumOfCheckListSalary.divide(BigDecimal.valueOf(checkList.size()), RoundingMode.DOWN))< 0){
                     returnList.add("Перевод сотрудников: " + names + " из "
@@ -80,14 +81,14 @@ public class Transfer {
                             + "/" + (department.getSumOfSalary()
                             .subtract(sumOfCheckListSalary))
                             .divide(BigDecimal.valueOf(department.getCountOfObjectEmployees())
-                                    .subtract(BigDecimal.valueOf(checkList.size())), RoundingMode.DOWN) + "]"
+                                    .subtract(BigDecimal.valueOf(checkList.size())), 2, RoundingMode.DOWN) + "]"
                             + " в "
                             + dep.getName()
                             + "(ЗП до/после["+ dep.getAverageSalary()
                             + "/" + (dep.getSumOfSalary()
                             .add(sumOfCheckListSalary))
                             .divide(BigDecimal.valueOf(dep.getCountOfObjectEmployees())
-                                    .add(BigDecimal.valueOf(checkList.size())), RoundingMode.DOWN) + "]" + "\n");
+                                    .add(BigDecimal.valueOf(checkList.size())), 2, RoundingMode.DOWN) + "]" + "\n");
                 }
             }
         }
